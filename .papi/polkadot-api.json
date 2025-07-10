@@ -1,0 +1,42 @@
+{
+  "version": 0,
+  "descriptorPath": ".papi/descriptors",
+  "entries": {
+    "paseo_hydra": {
+      "wsUrl": "wss://paseo-rpc.play.hydration.cloud",
+      "metadata": ".papi/metadata/paseo_hydra.scale",
+      "genesis": "0x05fab032a899566268235e3c89c847fb4644558a0d856282d47d17ff06cb2020",
+      "codeHash": "0xf229884fe5c637f59db752a7c67df6c536681f88f1631c8bf7da4d5bf29ac6f1"
+    },
+    "kusama": {
+      "chain": "ksmcc3",
+      "metadata": ".papi/metadata/kusama.scale",
+      "genesis": "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe",
+      "codeHash": "0xf45689276dfdcf05b6defd26da68e3283a96190d789f7a311ff31f64b455b421"
+    },
+    "moonriver": {
+      "wsUrl": "wss://wss.api.moonriver.moonbeam.network",
+      "metadata": ".papi/metadata/moonriver.scale",
+      "genesis": "0x401a1f9dca3da46f5c4091016c8a2f26dcea05865116b286f60f668207d1474b",
+      "codeHash": "0x91edd991eac25dccb6ff60d415a4961c3513b263c9a7340079f96de75473e137"
+    },
+    "acala": {
+      "wsUrl": "wss://acala-rpc.n.dwellir.com",
+      "metadata": ".papi/metadata/acala.scale",
+      "genesis": "0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c",
+      "codeHash": "0x55f7b185fec5e7ba4ed5816324151344e0c20e87582502bf50d74bdc3e40ebbe"
+    },
+    "polkadot": {
+      "chain": "polkadot",
+      "metadata": ".papi/metadata/polkadot.scale",
+      "genesis": "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3",
+      "codeHash": "0x716bb701ec19452fa522cdaa83ef101d368ba2bcfd89fde9acb6f793a420a616"
+    },
+    "polkadot_asset_hub": {
+      "chain": "polkadot_asset_hub",
+      "metadata": ".papi/metadata/polkadot_asset_hub.scale",
+      "genesis": "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
+      "codeHash": "0x6e20bc52aaaafd1de82ba7d2a3c0fa39193787e240b93608489cf72a4c46a584"
+    }
+  }
+}

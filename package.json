@@ -1,0 +1,26 @@
+{
+  "name": "test-papi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@paraspell/sdk": "^10.8.3",
+    "@galacticcouncil/sdk": "^9.6.1",
+    "@paraspell/xcm-router": "^10.10.3",
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
+    "@polkadot-labs/hdkd": "^0.0.19",
+    "@polkadot-labs/hdkd-helpers": "^0.0.19",
+    "@subsquid/ss58": "^2.0.2",
+    "dotenv": "^16.5.0",
+    "polkadot-api": "^1.14.1"
+  },
+  "devDependencies": {
+    "@galacticcouncil/api-augment": "^0.3.0"
+  }
+}
