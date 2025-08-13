@@ -8,7 +8,7 @@ import { sr25519CreateDerive } from "@polkadot-labs/hdkd";
 import dotenv from "dotenv";
 
 import { createClient } from "polkadot-api"
-import { paseo, paseo_asset_hub, polkadot, polkadot_asset_hub } from "@polkadot-api/descriptors"
+import { paseo, paseo_asset_hub, polkadot, polkadot_asset_hub, wnd, westend_asset_hub } from "@polkadot-api/descriptors"
 import { getWsProvider } from "polkadot-api/ws-provider/node"
 import { Binary } from 'polkadot-api';
 import { ss58Decode } from '@polkadot-labs/hdkd-helpers';
@@ -24,6 +24,7 @@ import {
     XcmV3Instruction,
     XcmV3MultiassetMultiAssetFilter,
     XcmV3MultiassetWildMultiAsset,
+    XcmV2OriginKind
   } from '@polkadot-api/descriptors';
 
 import { MultiAddress } from '@polkadot-api/descriptors'
@@ -38,9 +39,12 @@ dotenv.config();
 // const SOURCE_CHAIN_WS = "wss://paseo-rpc.n.dwellir.com";
 // const DESTINATION_CHAIN_WS = "wss://asset-hub-paseo-rpc.n.dwellir.com";
 
-const SOURCE_CHAIN_WS = "wss://polkadot-rpc.n.dwellir.com"
-const DESTINATION_CHAIN_WS = "wss://asset-hub-polkadot-rpc.n.dwellir.com"
+// const SOURCE_CHAIN_WS = "wss://polkadot-rpc.n.dwellir.com"
+// const DESTINATION_CHAIN_WS = "wss://asset-hub-polkadot-rpc.n.dwellir.com"
 
+
+const SOURCE_CHAIN_WS = "wss://westend-rpc.polkadot.io"
+const DESTINATION_CHAIN_WS = "wss://westmint-rpc-tn.dwellir.com"
 // 2. Destination Parachain (Asset Hub)
 //    The ParaID for Asset Hub on Polkadot is 1000, on Kusama is 1000, on Westend is 1000.
 const ASSET_HUB_PARA_ID = 1000;
@@ -64,7 +68,7 @@ const alice = getPolkadotSigner(
     aliceKeyPair.sign,
   )
   
-  const userPublicKey = ss58Decode("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")[0];
+  const userPublicKey = ss58Decode("5CwaVNAmJ6hWvu9tgxAPgxLD27SK36Vk4hgDcSZGK7z2eYiE")[0];
   const idBeneficiary = Binary.fromBytes(userPublicKey);
 
 
@@ -97,11 +101,11 @@ async function main() {
         withPolkadotSdkCompat(getWsProvider(SOURCE_CHAIN_WS)),
       );
 
-    const sourceApi = sourceClient.getTypedApi(polkadot);
+    const sourceApi = sourceClient.getTypedApi(wnd);
 
 
     const destinationClient = createClient(getWsProvider(DESTINATION_CHAIN_WS));
-    const destinationApi = destinationClient.getTypedApi(polkadot_asset_hub);
+    const destinationApi = destinationClient.getTypedApi(westend_asset_hub);
 
 
     const admin = {
@@ -109,7 +113,7 @@ async function main() {
     };
 
     const txCollection = destinationApi.tx.Nfts.create({
-        admin: MultiAddress.Id("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"),
+        admin: MultiAddress.Id("5CwaVNAmJ6hWvu9tgxAPgxLD27SK36Vk4hgDcSZGK7z2eYiE"),
         config: {
           settings: 0n,
           max_supply: undefined,
@@ -123,96 +127,8 @@ async function main() {
         },
       })
 
-    // console.log("remote call:", remoteCall.decodedCall);
-    // console.log(`✅ Encoded remote call 'nfts.create': ${toHex(remoteCall.getEncodedData())}`);
-    // --- 4. Construct the XCM Message ---
-    //    This message tells Asset Hub what to do.
-    // const destination = { V4: { parents: 0, interior: { X1: [{ Parachain: ASSET_HUB_PARA_ID }] } } };
-
-    // const instr1 = {
-    //     WithdrawAsset: [
-    //       {
-    //         id: {
-    //           parents: 0,
-    //           interior: { X1: [{ PalletInstance: 3 }] },
-    //         },
-    //         fun: { Fungible: 10_000_000_000n },
-    //       },
-    //     ],
-    //   };
-    //   const instr2 = {
-    //     BuyExecution: [
-    //       {
-    //         id: {
-    //           parents: 0,
-    //           interior: { X1: [{ PalletInstance: 3 }] },
-    //         },
-    //         fun: { Fungible: 10_000_000_000n },
-    //       },
-    //       { Unlimited: null },
-    //     ],
-    //   };
-    //   const instr3 = {
-    //     Transact: {
-    //       originKind: 'SovereignAccount',
-    //       requireWeightAtMost: { refTime: 40000000000n, proofSize: 900000n },
-    //       call: remoteCall.decodedCall,
-    //     },
-    //   };
-    //   const message = { V4: [instr1, instr2, instr3] };
-    // console.log("📝 Constructed XCM message. Preparing to send...");
-
-    // const destination = {
-    //     V3: {
-    //         parents: 0, // 0 = Stay on the Relay Chain to send down to a child parachain
-    //         interior: { X1: { Parachain: ASSET_HUB_PARA_ID } },
-    //     },
-    // };
-
-    // const message = {
-    //     V3: [
-    //         // Instruction 1: Pay for execution time on Asset Hub.
-    //         // This withdraws the relay chain's native token from the user's account.
-    //         {
-    //             WithdrawAsset: [
-    //                 {
-    //                     id: { Concrete: { parents: 0, interior: "Here" } }, // Relay chain native token
-    //                     fun: { Fungible: 1_000_000_000 }, // Amount to pay for fees, adjust as needed
-    //                 },
-    //             ],
-    //         },
-    //         // Instruction 2: Buy execution time with the withdrawn asset.
-    //         {
-    //             BuyExecution: {
-    //                 fees: {
-    //                     id: { Concrete: { parents: 0, interior: "Here" } },
-    //                     fun: { Fungible: 1_000_000_000 },
-    //                 },
-    //                 weightLimit: XCM_WEIGHT_LIMIT,
-    //             },
-    //         },
-    //         // Instruction 3: Change the origin.
-    //         // This tells Asset Hub to treat the origin of the next instruction
-    //         // as the user's own account, not as the Relay Chain itself.
-    //         {
-    //             DescendOrigin: {
-    //                 X1: { AccountId32: { network: null, id: aliceKeyPair.publicKey } }
-    //             }
-    //         },
-    //         // Instruction 4: The main action - execute the `nfts.create` call.
-    //         // The `originKind` is `Native` because `DescendOrigin` has already set
-    //         // the origin to be a native account on the target chain.
-    //         {
-    //             Transact: {
-    //                 originKind: "Native",
-    //                 requireWeightAtMost: { refTime: 1_000_000_000, proofSize: 900000 }, // Weight required for the nfts.create call
-    //                 call: remoteCall.decodedCall,
-    //             },
-    //         },
-    //     ],
-    // };
-
     console.log("Here:", (await txCollection.getEncodedData()).asHex())
+    const encodedTx = await txCollection.getEncodedData();
     const destination = XcmVersionedLocation.V3({
         parents: 0, // 0 = Sending to a child parachain from the Relay Chain
         interior: XcmV3Junctions.X1(XcmV3Junction.Parachain(ASSET_HUB_PARA_ID)),
@@ -226,7 +142,7 @@ async function main() {
                 parents: 0,
                 interior: XcmV3Junctions.Here()
             }),
-            fun: XcmV3MultiassetFungibility.Fungible(10_000_000_000_000n),
+            fun: XcmV3MultiassetFungibility.Fungible(2_000_000_000_000n),
         }, ]),
         // Instruction 2: Buy execution time with the withdrawn asset.
         XcmV3Instruction.BuyExecution({
@@ -235,46 +151,30 @@ async function main() {
                     parents: 0,
                     interior: XcmV3Junctions.Here()
                 }),
-                fun: XcmV3MultiassetFungibility.Fungible(10_000_000_000_000n),
+                fun: XcmV3MultiassetFungibility.Fungible(2_000_000_000_000n),
             },
             weight_limit: XcmV3WeightLimit.Unlimited(),
         }),
         // // Instruction 3: Change the origin.
-        // XcmV3Instruction.DescendOrigin(
-        //     XcmV3Junctions.X1(
-        //         XcmV3Junction.AccountId32({
-        //             network: undefined,
-        //             id: idBeneficiary
-        //         })
-        //     )
-        // ),
+        XcmV3Instruction.DescendOrigin(
+            XcmV3Junctions.X1(
+                XcmV3Junction.AccountId32({
+                    network: undefined,
+                    id: idBeneficiary
+                })
+            )
+        ),
         // Instruction 4: The main action - execute the `nfts.create` call.
         XcmV3Instruction.Transact({
-            origin_kind: "SovereignAccount",
+            origin_kind: XcmV2OriginKind.Native(),
             require_weight_at_most: {
-                ref_time: 2_000_000_000_000n,
-                proof_size: 2_000_000n
+                ref_time: 40000000000n,
+                proof_size: 900000n,
             },
-            call: await txCollection.getEncodedData(),
+            call: encodedTx,
         }),
-        // // Instruction 5 (Optional but recommended): Refund any surplus weight fees.
-        // XcmV3Instruction.RefundSurplus(),
-        // // Instruction 6 (Optional but recommended): Deposit the refund back to the user's account on the Relay Chain.
-        // XcmV3Instruction.DepositAsset({
-        //     assets: XcmV3MultiassetMultiAssetFilter.Wild(
-        //         XcmV3MultiassetWildMultiAsset.All()
-        //     ),
-        //     beneficiary: {
-        //         parents: 1,
-        //         interior: XcmV3Junctions.X1(
-        //             XcmV3Junction.AccountId32({
-        //                 network: undefined,
-        //                 id: idBeneficiary
-        //             })
-        //         ),
-        //     },
-        // }),
     ]);
+    //0x340000d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d000000000000000000000000000000000000000000
 
     console.log("destination:", destination);
     console.log("message:", message);
@@ -283,10 +183,10 @@ async function main() {
 
     // --- 5. Build and Send the `xcmPallet.send` Transaction ---
     //    On the Relay Chain, we use `xcmPallet.send` to dispatch the XCM.
-    // const xcmTx = sourceApi.tx.XcmPallet.send({
-    //     dest: destination,
-    //     message: message,
-    // });
+    const xcmTx = sourceApi.tx.XcmPallet.send({
+        dest: destination,
+        message: message,
+    });
     // console.log(xcmTx);
     // console.log(xcmTx.decodedCall);
 
@@ -295,8 +195,9 @@ async function main() {
         message,
       );
 
-      console.log("Dry Run Result:", dryRunResult);
-
+      console.log("Dry Run Result:", JSON.stringify(dryRunResult, null, 2));
+      const encoded = (await xcmTx.getEncodedData()).asHex();
+      console.log("Encoded:", encoded);
     // try {
     //     const txHash = await xcmTx.signAndSubmit(alice);
     //     console.log(`\n🎉 Transaction sent from source chain with hash: ${txHash}`);
