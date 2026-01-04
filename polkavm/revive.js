@@ -108,7 +108,7 @@ export function signerOf() {
 
 async function getAccount() {
     try {
-        const value = await api.query.Revive.OriginalAccount.getValue('5FdxcDTshU5yhHrC91NneaJ64XCE2jwxnMCv8bfxQbwhkWMG')
+        const value = await api.query.Revive.OriginalAccount.getValue('0x0260f105548c38c2785322ac884311ecfcd1f129')
         console.log(value)
 
     } catch (error) {
