@@ -22,11 +22,11 @@ import { westend2 } from "polkadot-api/chains"
 dotenv.config();
 
 
-// const WESTEND_ASSET_HUB='wss://westend-asset-hub-rpc.polkadot.io';
-const PASSET_HUB='wss://testnet-passet-hub.polkadot.io';
+const WESTEND_ASSET_HUB='wss://westend-asset-hub-rpc.polkadot.io';
+// const PASSET_HUB='wss://testnet-passet-hub.polkadot.io';
 
 
-const client = createClient(getWsProvider(PASSET_HUB));
+const client = createClient(getWsProvider(WESTEND_ASSET_HUB));
 
 // export const client = createClient(
 //     withLogsRecorder(
@@ -49,7 +49,7 @@ const client = createClient(getWsProvider(PASSET_HUB));
 
 const api = client.getTypedApi(westend_asset_hub);
 
-async function main() {
+async function deposit() {
     try {
         console.log('🚀 Starting revive transaction...');
 
@@ -105,9 +105,23 @@ export function signerOf() {
     }
 }
 
-main().catch(error => {
-    console.error('❌ Script failed:', error);
-    process.exit(1);
-});
+
+async function getAccount() {
+    try {
+        const value = await api.query.Revive.OriginalAccount.getValue('5FdxcDTshU5yhHrC91NneaJ64XCE2jwxnMCv8bfxQbwhkWMG')
+        console.log(value)
+
+    } catch (error) {
+        console.error('❌ Error in getAccount function:', error);
+        throw error;
+    }
+}
+
+
+// deposit();
+
+getAccount();
+
+
 
 
